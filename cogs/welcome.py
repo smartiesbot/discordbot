@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+from .ui_helpers import add_info_fields, brand_embed, bullet_list
+
 DEFAULT_WELCOME = "👋 Willkommen {member}! Starte einsatzbereit in Notruf Hamburg."
 DEFAULT_FAREWELL = "🚨 {name} verlässt den Funk. Wir sehen uns beim nächsten Einsatz!"
 
@@ -63,6 +65,7 @@ class Welcome(commands.Cog):
         template: str | None,
         fallback: str,
         title: str,
+        icon: str,
         colour: discord.Colour,
     ) -> None:
         if not channel_id:
@@ -71,8 +74,27 @@ class Welcome(commands.Cog):
         if not isinstance(channel, discord.TextChannel):
             return
         description = self._render_template(template, member, fallback=fallback)
-        embed = discord.Embed(title=title, description=description, colour=colour)
+        embed = brand_embed(title, description=description, colour=colour, icon=icon)
         embed.set_thumbnail(url=member.display_avatar.url)
+        member_count = member.guild.member_count
+        add_info_fields(
+            embed,
+            [
+                (
+                    "Schnellstart",
+                    bullet_list(
+                        [
+                            "Hol dir ein Einsatzfahrzeug im Spawn und melde dich bei der Leitstelle.",
+                            "Checke dein Funkgerät mit `/leitstelle status-set`.",
+                            "Lies die Einsatzordnung im Info-Kanal, bevor du loslegst.",
+                        ]
+                    ),
+                ),
+                (
+                    "Crew", f"Wir zählen jetzt **{member_count}** Einsatzkräfte in {member.guild.name}!",
+                ),
+            ],
+        )
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
@@ -91,6 +113,7 @@ class Welcome(commands.Cog):
             template=template,
             fallback=DEFAULT_WELCOME,
             title="Willkommen an Bord!",
+            icon="🎉",
             colour=discord.Colour.green(),
         )
 
@@ -110,6 +133,7 @@ class Welcome(commands.Cog):
             template=template,
             fallback=DEFAULT_FAREWELL,
             title="Bis zum nächsten Einsatz!",
+            icon="👋",
             colour=discord.Colour.orange(),
         )
 

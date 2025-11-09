@@ -7,7 +7,7 @@ class LoggingCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="log-set", description="Set the log channel for moderation events.")
+    @app_commands.command(name="log-set", description="Lege den Kanal für Moderationsprotokolle fest.")
     @app_commands.default_permissions(manage_guild=True)
     async def log_set(self, interaction: discord.Interaction, channel: discord.TextChannel):
         await self._save_setting(interaction.guild_id, "log_channel_id", channel.id)

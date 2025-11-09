@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+from .ui_helpers import add_info_fields, brand_embed, bullet_list
+
 class TicketOpenView(discord.ui.View):
     def __init__(self, bot):
         super().__init__(timeout=None)
@@ -19,7 +21,20 @@ class TicketOpenView(discord.ui.View):
             interaction.user: discord.PermissionOverwrite(view_channel=True, send_messages=True)
         }
         ch = await guild.create_text_channel(f"ticket-{interaction.user.name}", category=category, overwrites=overwrites)
-        await ch.send(f"{interaction.user.mention} Willkommen im Ticket! Beschreibe dein Anliegen.", view=TicketCloseView())
+        embed = brand_embed(
+            "Ticket eröffnet",
+            description="Ein Dispatcher meldet sich gleich bei dir.",
+            icon="🎫",
+            colour=discord.Colour.from_str("#22d3ee"),
+        )
+        add_info_fields(
+            embed,
+            [
+                ("Checkliste", bullet_list(["Beschreibe dein Anliegen so konkret wie möglich.", "Füge Screenshots oder Videos bei Bedarf hinzu.", "Nutze @here nur bei echter Dringlichkeit."])),
+                ("Status", "Ein Teammitglied wird dich gleich unterstützen."),
+            ],
+        )
+        await ch.send(f"{interaction.user.mention}", embed=embed, view=TicketCloseView())
         await interaction.response.send_message(f"Ticket eröffnet: {ch.mention}", ephemeral=True)
 
 class TicketCloseView(discord.ui.View):
@@ -29,13 +44,13 @@ class TicketCloseView(discord.ui.View):
     @discord.ui.button(label="✅ Ticket schließen", style=discord.ButtonStyle.danger, custom_id="ticket_close_btn")
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Ticket wird geschlossen...", ephemeral=True)
-        await interaction.channel.delete(reason=f"Closed by {interaction.user}")
+        await interaction.channel.delete(reason=f"Geschlossen von {interaction.user}")
 
 class Tickets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="ticket-setup", description="Post a ticket creation panel.")
+    @app_commands.command(name="ticket-setup", description="Veröffentliche ein Panel zur Ticketerstellung.")
     @app_commands.default_permissions(manage_channels=True)
     async def ticket_setup(self, interaction: discord.Interaction, channel: discord.TextChannel | None = None, category: discord.CategoryChannel | None = None):
         if channel is None:
@@ -43,7 +58,20 @@ class Tickets(commands.Cog):
         if category:
             await self._save_setting(interaction.guild_id, "tickets_category_id", category.id)
         view = TicketOpenView(self.bot)
-        msg = await channel.send("Brauchst du Hilfe? Öffne ein Ticket:", view=view)
+        panel = brand_embed(
+            "Support-Zentrale",
+            description="Erstelle bei Fragen oder Meldungen ein Ticket.",
+            icon="🛠️",
+            colour=discord.Colour.from_str("#0ea5e9"),
+        )
+        add_info_fields(
+            panel,
+            [
+                ("Perfekte Vorbereitung", bullet_list(["Beschreibe dein Anliegen in einem Satz.", "Hänge Beweise oder Screenshots direkt an.", "Nutze den richtigen Kategorienamen im Betreff."])),
+                ("Reaktionszeit", "Unser Team meldet sich in der Regel innerhalb weniger Minuten."),
+            ],
+        )
+        msg = await channel.send(embed=panel, view=view)
         await interaction.response.send_message(f"🎟️ Ticket-Panel gepostet: {msg.jump_url}", ephemeral=True)
 
     async def _save_setting(self, guild_id: int, key: str, value: int | None):

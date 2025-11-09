@@ -10,33 +10,33 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="kick", description="Kick a member.")
+    @app_commands.command(name="kick", description="Entferne ein Mitglied vom Server.")
     @mod_perms()
     async def kick(self, interaction: discord.Interaction, member: discord.Member, reason: str | None = None):
-        await member.kick(reason=reason or f"Kicked by {interaction.user}")
-        await interaction.response.send_message(f"✅ {member} wurde gekickt. Grund: {reason or '—'}", ephemeral=True)
+        await member.kick(reason=reason or f"Entfernt durch {interaction.user}")
+        await interaction.response.send_message(f"✅ {member} wurde entfernt. Grund: {reason or '—'}", ephemeral=True)
 
-    @app_commands.command(name="ban", description="Ban a member.")
+    @app_commands.command(name="ban", description="Verbanne ein Mitglied dauerhaft.")
     @mod_perms()
     async def ban(self, interaction: discord.Interaction, member: discord.Member, reason: str | None = None):
-        await member.ban(reason=reason or f"Banned by {interaction.user}")
+        await member.ban(reason=reason or f"Gebannt durch {interaction.user}")
         await interaction.response.send_message(f"✅ {member} wurde gebannt.", ephemeral=True)
 
-    @app_commands.command(name="timeout", description="Timeout a member (minutes).")
+    @app_commands.command(name="timeout", description="Setze einem Mitglied einen Timeout in Minuten.")
     @mod_perms()
     async def timeout(self, interaction: discord.Interaction, member: discord.Member, minutes: int, reason: str | None = None):
         duration = discord.utils.utcnow() + discord.timedelta(minutes=minutes)
-        await member.timeout(until=duration, reason=reason or f"Timeout by {interaction.user}")
+        await member.timeout(until=duration, reason=reason or f"Timeout durch {interaction.user}")
         await interaction.response.send_message(f"⏳ {member} Timeout für {minutes} Min.", ephemeral=True)
 
-    @app_commands.command(name="purge", description="Delete N messages from this channel.")
+    @app_commands.command(name="purge", description="Lösche N Nachrichten aus diesem Kanal.")
     @mod_perms()
     async def purge(self, interaction: discord.Interaction, amount: int):
         await interaction.response.defer(ephemeral=True, thinking=True)
         deleted = await interaction.channel.purge(limit=amount)
         await interaction.followup.send(f"🧹 Gelöscht: {len(deleted)} Nachrichten.", ephemeral=True)
 
-    @app_commands.command(name="slowmode", description="Set slowmode seconds for this channel (0 to disable).")
+    @app_commands.command(name="slowmode", description="Setze den Slowmode in Sekunden (0 deaktiviert ihn).")
     @mod_perms()
     async def slowmode(self, interaction: discord.Interaction, seconds: int):
         await interaction.channel.edit(slowmode_delay=seconds)

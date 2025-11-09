@@ -4,6 +4,8 @@ import discord
 from discord.ext import commands, tasks
 from discord import app_commands
 
+from .ui_helpers import add_info_fields, brand_embed
+
 DURATION_RE = re.compile(r'(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?', re.I)
 
 def parse_duration(s: str):
@@ -22,8 +24,8 @@ class Reminders(commands.Cog):
     def cog_unload(self):
         self.checker.cancel()
 
-    @app_commands.command(name="remind", description="Set a reminder like: 10m Take a break")
-    @app_commands.describe(when="Duration like 10m, 2h, 1d2h", text="Reminder text")
+    @app_commands.command(name="remind", description="Setze eine Erinnerung, z. B. `10m Pause machen`.")
+    @app_commands.describe(when="Dauer wie 10m, 2h, 1d2h", text="Text der Erinnerung")
     async def remind(self, interaction: discord.Interaction, when: str, text: str):
         seconds = parse_duration(when)
         if not seconds:
@@ -35,7 +37,20 @@ class Reminders(commands.Cog):
             (interaction.guild_id, interaction.user.id, interaction.channel_id, text, due, now)
         )
         await self.bot.db.commit()
-        await interaction.response.send_message(f"⏰ Reminder gesetzt: in {when} – „{text}“", ephemeral=True)
+        embed = brand_embed(
+            "Reminder gesetzt",
+            description=f"„{text}“",
+            icon="⏰",
+            colour=discord.Colour.from_str("#f97316"),
+        )
+        add_info_fields(
+            embed,
+            [
+                ("Auslösung", f"<t:{due}:R> – <t:{due}:F>"),
+                ("Kanal", interaction.channel.mention if interaction.channel else "DM"),
+            ],
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @tasks.loop(seconds=10)
     async def checker(self):
@@ -46,7 +61,15 @@ class Reminders(commands.Cog):
             channel = self.bot.get_channel(cid)
             try:
                 if channel:
-                    await channel.send(f"⏰ <@{uid}> Reminder: **{text}**")
+                    embed = brand_embed(
+                        "Reminder fällig",
+                        description=f"**{text}**",
+                        icon="⏰",
+                        colour=discord.Colour.from_str("#facc15"),
+                    )
+                    embed.add_field(name="Empfänger", value=f"<@{uid}>", inline=True)
+                    embed.timestamp = discord.utils.utcnow()
+                    await channel.send(embed=embed)
             except Exception:
                 pass
             await self.bot.db.execute("UPDATE reminders SET done=1 WHERE id=?", (rid,))

@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Feuer in der Speicherstadt",
+    "district": "Speicherstadt",
+    "situation": "Brandmeldeanlage schlägt an, dichter Rauch im Lagerhaus, historische Bausubstanz gefährdet.",
+    "units": ["HLF", "DLK", "ELW", "RTW"],
+    "extra": "Museumsleitung bittet um Evakuierung wertvoller Ausstellungsstücke."
+  },
+  {
+    "title": "Großeinsatz Elbtunnel",
+    "district": "Elbtunnel",
+    "situation": "Mehrfahrzeugunfall im Baustellenbereich, Sicht durch Rauchentwicklung eingeschränkt.",
+    "units": ["HLF", "RW", "NEF", "RTW", "Polizei", "THW"],
+    "extra": "Leitstelle richtet einen Bereitstellungsraum an der Ausfahrt ein."
+  },
+  {
+    "title": "Seenotrettung Elbe",
+    "district": "Elbe",
+    "situation": "Fahrgastschiff meldet medizinischen Notfall an Bord, starker Wellengang erschwert die Bergung.",
+    "units": ["Wasserrettung", "RTW", "NEF", "DLRG"],
+    "extra": "Hubschrauber der Küstenwache steht als Backup bereit."
+  },
+  {
+    "title": "Großbrand Industriegebiet",
+    "district": "Billbrook",
+    "situation": "Lagerhalle für Gefahrstoffe in Vollbrand, Explosionen möglich.",
+    "units": ["HLF", "TLF", "GW-G", "ELW", "RTW"],
+    "extra": "Messzug wird zur Luftüberwachung angefordert, Anwohner werden gewarnt."
+  },
+  {
+    "title": "Großlage Hafenfest",
+    "district": "Landungsbrücken",
+    "situation": "Massenpanik nach Feuerwerk, zahlreiche leicht Verletzte und vermisste Kinder.",
+    "units": ["ELW", "GW-San", "RTW", "KTW", "Polizei", "SEG"],
+    "extra": "Presse ist bereits auf dem Weg, Social-Media-Team benötigt Lageinfos."
+  }
+]

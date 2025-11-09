@@ -4,12 +4,13 @@
 Features:
 - Moderation: /ban /kick /timeout /purge /slowmode
 - AutoMod: bad-word filter (editable), link spam toggle
-- Welcome/Goodbye: configurable welcome channel + DM
+- Welcome/Farewell: konfigurierbarer Kanal, individuelle Texte für Begrüßung & Abschied
 - Roles: create a button role panel
 - Tickets: /ticket-setup and open/close via buttons
 - Reminders: /remind me in 10m ... (SQLite + background task)
 - Logging: message edits/deletes, member join/leave
 - Polls: /poll create with buttons
+- Leitstelle & RP-Tools: /einsatz Szenarien-Generator, /leitstelle status-* Board, Lagebericht für Notruf Hamburg
 - Utils: /ping, /server, /userinfo
 
 ## Setup (Windows PowerShell)

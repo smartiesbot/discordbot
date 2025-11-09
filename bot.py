@@ -47,8 +47,19 @@ class ManagerBot(discord.Client):
                 created_ts INTEGER,
                 done INTEGER DEFAULT 0
             );
+            CREATE TABLE IF NOT EXISTS unit_status (
+                guild_id INTEGER,
+                user_id INTEGER,
+                status TEXT,
+                note TEXT,
+                updated_ts INTEGER,
+                PRIMARY KEY (guild_id, user_id)
+            );
             '''
         )
+        await self._ensure_column("settings", "farewell_channel_id", "INTEGER")
+        await self._ensure_column("settings", "welcome_message", "TEXT")
+        await self._ensure_column("settings", "farewell_message", "TEXT")
         await self.db.commit()
 
         # Load cogs
@@ -61,10 +72,20 @@ class ManagerBot(discord.Client):
         await self.load_extension("cogs.reminders")
         await self.load_extension("cogs.logging")
         await self.load_extension("cogs.polls")
+        await self.load_extension("cogs.operations")
 
         # Sync slash commands
         await self.tree.sync()
         logging.info("Slash commands synced.")
+
+    async def _ensure_column(self, table: str, column: str, definition: str) -> None:
+        assert self.db is not None
+        async with self.db.execute(f"PRAGMA table_info({table})") as cursor:
+            rows = await cursor.fetchall()
+        existing = {row[1] for row in rows}
+        if column not in existing:
+            await self.db.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+            await self.db.commit()
 
 client = ManagerBot()
 

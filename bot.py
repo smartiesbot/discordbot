@@ -4,7 +4,7 @@ import logging
 import aiosqlite
 from dotenv import load_dotenv
 import discord
-from discord import app_commands
+from discord.ext import commands
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s: %(message)s")
 
@@ -17,10 +17,9 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = False
 
-class ManagerBot(discord.Client):
+class ManagerBot(commands.Bot):
     def __init__(self):
-        super().__init__(intents=intents)
-        self.tree = app_commands.CommandTree(self)
+        super().__init__(command_prefix=commands.when_mentioned_or("!"), intents=intents)
         self.db = None  # type: aiosqlite.Connection | None
 
     async def setup_hook(self):
@@ -86,6 +85,12 @@ class ManagerBot(discord.Client):
         if column not in existing:
             await self.db.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
             await self.db.commit()
+
+    async def close(self):
+        if self.db is not None:
+            await self.db.close()
+            self.db = None
+        await super().close()
 
 client = ManagerBot()
 

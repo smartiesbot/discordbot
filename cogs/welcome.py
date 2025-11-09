@@ -14,12 +14,12 @@ class Welcome(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="welcome-set", description="Set the welcome channel.")
-    @app_commands.describe(channel="Select the channel for welcomes")
+    @app_commands.command(name="welcome-set", description="Lege den Kanal für Begrüßungen fest.")
+    @app_commands.describe(channel="Wähle den Kanal für Willkommensnachrichten")
     @app_commands.default_permissions(manage_guild=True)
     async def welcome_set(self, interaction: discord.Interaction, channel: discord.TextChannel):
         await self._save_setting(interaction.guild_id, "welcome_channel_id", channel.id)
-        await interaction.response.send_message(f"👋 Welcome-Channel gesetzt: {channel.mention}", ephemeral=True)
+        await interaction.response.send_message(f"👋 Willkommenskanal gesetzt: {channel.mention}", ephemeral=True)
 
     async def _save_setting(self, guild_id: int, key: str, value):
         await self.bot.db.execute(
@@ -28,22 +28,22 @@ class Welcome(commands.Cog):
         )
         await self.bot.db.commit()
 
-    @app_commands.command(name="farewell-set", description="Set the farewell channel.")
-    @app_commands.describe(channel="Select the channel for farewells")
+    @app_commands.command(name="farewell-set", description="Lege den Kanal für Abschiede fest.")
+    @app_commands.describe(channel="Wähle den Kanal für Abschiedsnachrichten")
     @app_commands.default_permissions(manage_guild=True)
     async def farewell_set(self, interaction: discord.Interaction, channel: discord.TextChannel):
         await self._save_setting(interaction.guild_id, "farewell_channel_id", channel.id)
-        await interaction.response.send_message(f"👋 Farewell-Channel gesetzt: {channel.mention}", ephemeral=True)
+        await interaction.response.send_message(f"👋 Abschiedskanal gesetzt: {channel.mention}", ephemeral=True)
 
-    @app_commands.command(name="welcome-message", description="Set a custom welcome message.")
-    @app_commands.describe(message="Use {member}, {name} oder {guild} als Platzhalter")
+    @app_commands.command(name="welcome-message", description="Speichere eine individuelle Willkommensnachricht.")
+    @app_commands.describe(message="Nutze {member}, {name} oder {guild} als Platzhalter")
     @app_commands.default_permissions(manage_guild=True)
     async def welcome_message(self, interaction: discord.Interaction, message: str):
         await self._save_setting(interaction.guild_id, "welcome_message", message)
         await interaction.response.send_message("✅ Willkommensnachricht aktualisiert.", ephemeral=True)
 
-    @app_commands.command(name="farewell-message", description="Set a custom farewell message.")
-    @app_commands.describe(message="Use {member}, {name} oder {guild} als Platzhalter")
+    @app_commands.command(name="farewell-message", description="Speichere eine individuelle Abschiedsnachricht.")
+    @app_commands.describe(message="Nutze {member}, {name} oder {guild} als Platzhalter")
     @app_commands.default_permissions(manage_guild=True)
     async def farewell_message(self, interaction: discord.Interaction, message: str):
         await self._save_setting(interaction.guild_id, "farewell_message", message)

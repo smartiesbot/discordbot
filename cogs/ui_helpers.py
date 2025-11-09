@@ -17,7 +17,7 @@ def brand_embed(
     colour: discord.Colour | None = None,
     icon: str | None = None,
 ) -> discord.Embed:
-    """Create a consistently styled embed for bot messages."""
+    """Erstelle ein konsistent gestaltetes Embed für Bot-Nachrichten."""
 
     heading = f"{icon} {title}" if icon else title
     embed = discord.Embed(title=heading, description=description, colour=colour or PRIMARY_COLOUR)
@@ -26,7 +26,7 @@ def brand_embed(
 
 
 def add_info_fields(embed: discord.Embed, fields: Iterable[tuple[str, str | None]]) -> discord.Embed:
-    """Append non-empty fields to an embed."""
+    """Hänge nicht-leere Felder an ein Embed an."""
 
     for name, value in fields:
         if value:
@@ -35,20 +35,20 @@ def add_info_fields(embed: discord.Embed, fields: Iterable[tuple[str, str | None
 
 
 def bullet_list(items: Iterable[str], *, bullet: str = "•") -> str:
-    """Return a formatted bullet list for embed content."""
+    """Formatiere eine Aufzählung für Embed-Inhalte."""
 
     lines = [f"{bullet} {item}" for item in items if item]
     return "\n".join(lines) if lines else "–"
 
 
 def inline_stats(values: Sequence[tuple[str, str | None]]) -> str:
-    """Format key/value stats for a compact embed field."""
+    """Formatiere Kennzahlen für ein kompaktes Embed-Feld."""
 
     parts = [f"**{key}:** {value}" for key, value in values if value]
     return " · ".join(parts) if parts else "–"
 
 
 def clone_embed(embed: discord.Embed) -> discord.Embed:
-    """Return a detached clone that can be mutated safely."""
+    """Erstelle eine getrennte Kopie, die sicher angepasst werden kann."""
 
     return discord.Embed.from_dict(embed.to_dict())

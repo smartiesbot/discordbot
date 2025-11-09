@@ -24,8 +24,8 @@ class Reminders(commands.Cog):
     def cog_unload(self):
         self.checker.cancel()
 
-    @app_commands.command(name="remind", description="Set a reminder like: 10m Take a break")
-    @app_commands.describe(when="Duration like 10m, 2h, 1d2h", text="Reminder text")
+    @app_commands.command(name="remind", description="Setze eine Erinnerung, z. B. `10m Pause machen`.")
+    @app_commands.describe(when="Dauer wie 10m, 2h, 1d2h", text="Text der Erinnerung")
     async def remind(self, interaction: discord.Interaction, when: str, text: str):
         seconds = parse_duration(when)
         if not seconds:

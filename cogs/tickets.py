@@ -44,13 +44,13 @@ class TicketCloseView(discord.ui.View):
     @discord.ui.button(label="✅ Ticket schließen", style=discord.ButtonStyle.danger, custom_id="ticket_close_btn")
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Ticket wird geschlossen...", ephemeral=True)
-        await interaction.channel.delete(reason=f"Closed by {interaction.user}")
+        await interaction.channel.delete(reason=f"Geschlossen von {interaction.user}")
 
 class Tickets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="ticket-setup", description="Post a ticket creation panel.")
+    @app_commands.command(name="ticket-setup", description="Veröffentliche ein Panel zur Ticketerstellung.")
     @app_commands.default_permissions(manage_channels=True)
     async def ticket_setup(self, interaction: discord.Interaction, channel: discord.TextChannel | None = None, category: discord.CategoryChannel | None = None):
         if channel is None:

@@ -31,8 +31,8 @@ class Polls(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="poll", description="Create a button poll")
-    @app_commands.describe(question="The poll question", options="Comma-separated options (2-5)")
+    @app_commands.command(name="poll", description="Erstelle eine Abstimmung mit Buttons.")
+    @app_commands.describe(question="Frage der Umfrage", options="Kommagetrennte Optionen (2-5)")
     async def poll(self, interaction: discord.Interaction, question: str, options: str):
         opts = [o.strip() for o in options.split(",") if o.strip()]
         if not (2 <= len(opts) <= 5):

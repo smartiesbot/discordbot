@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s: %(messag
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
-    raise RuntimeError("Missing DISCORD_TOKEN in .env")
+    raise RuntimeError("DISCORD_TOKEN fehlt in der .env")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -75,7 +75,7 @@ class ManagerBot(commands.Bot):
 
         # Sync slash commands
         await self.tree.sync()
-        logging.info("Slash commands synced.")
+        logging.info("Slash-Commands synchronisiert.")
 
     async def _ensure_column(self, table: str, column: str, definition: str) -> None:
         assert self.db is not None
@@ -96,8 +96,8 @@ client = ManagerBot()
 
 @client.event
 async def on_ready():
-    logging.info(f"Logged in as {client.user} (ID: {client.user.id})")
-    await client.change_presence(activity=discord.Game(name="/help | Manager Bot"))
+    logging.info(f"Eingeloggt als {client.user} (ID: {client.user.id})")
+    await client.change_presence(activity=discord.Game(name="/leitstelle einsatz | Manager Bot"))
 
 if __name__ == "__main__":
     client.run(TOKEN)

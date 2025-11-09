@@ -18,11 +18,19 @@ class AutoMod(commands.Cog):
         if BADWORDS_PATH.exists():
             self.badwords = {w.strip().lower() for w in BADWORDS_PATH.read_text(encoding="utf-8").splitlines() if w.strip()}
 
-    @app_commands.command(name="automod", description="Toggle and control automod.")
-    @app_commands.describe(action="enable/disable/links/reload")
+    @app_commands.command(name="automod", description="Steuere den AutoMod für deinen Server.")
+    @app_commands.describe(aktion="Wähle die gewünschte Aktion")
+    @app_commands.choices(
+        aktion=[
+            app_commands.Choice(name="Aktivieren", value="enable"),
+            app_commands.Choice(name="Deaktivieren", value="disable"),
+            app_commands.Choice(name="Link-Blocker umschalten", value="links"),
+            app_commands.Choice(name="Wortliste neu laden", value="reload"),
+        ]
+    )
     @app_commands.default_permissions(manage_guild=True)
-    async def automod(self, interaction: discord.Interaction, action: str):
-        action = action.lower()
+    async def automod(self, interaction: discord.Interaction, aktion: app_commands.Choice[str]):
+        action = aktion.value
         if action == "enable":
             self.enabled = True
             await interaction.response.send_message("✅ AutoMod aktiviert.", ephemeral=True)
@@ -35,8 +43,6 @@ class AutoMod(commands.Cog):
         elif action == "reload":
             self._load()
             await interaction.response.send_message("🔁 Badwords neu geladen.", ephemeral=True)
-        else:
-            await interaction.response.send_message("Aktionen: enable, disable, links, reload", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):

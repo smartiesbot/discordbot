@@ -10,6 +10,15 @@ from discord.ext import commands
 from .ui_helpers import add_info_fields, brand_embed, bullet_list, inline_stats
 
 
+VERIFICATION_LABELS = {
+    discord.VerificationLevel.none: "Keine",
+    discord.VerificationLevel.low: "Niedrig",
+    discord.VerificationLevel.medium: "Mittel",
+    discord.VerificationLevel.high: "Hoch",
+    discord.VerificationLevel.highest: "Sehr hoch",
+}
+
+
 class Utils(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -20,17 +29,17 @@ class Utils(commands.Cog):
     def _format_duration(seconds: float) -> str:
         seconds = int(seconds)
         periods = (
-            ("d", 86400),
-            ("h", 3600),
-            ("m", 60),
-            ("s", 1),
+            ("T", 86400),
+            ("Std", 3600),
+            ("Min", 60),
+            ("Sek", 1),
         )
         parts: list[str] = []
         for suffix, length in periods:
             value, seconds = divmod(seconds, length)
             if value:
-                parts.append(f"{value}{suffix}")
-        return " ".join(parts) if parts else "0s"
+                parts.append(f"{value} {suffix}")
+        return " ".join(parts) if parts else "0 Sek"
 
     @staticmethod
     def _format_roles(member: discord.Member, *, limit: int = 8) -> str:
@@ -57,8 +66,8 @@ class Utils(commands.Cog):
             colour=discord.Colour.from_str("#22c55e"),
         )
         embed.add_field(name="Antwortzeit", value=f"`{latency_ms} ms`", inline=True)
-        embed.add_field(name="Uptime", value=f"`{uptime}`", inline=True)
-        embed.add_field(name="Servers", value=f"`{guilds}`", inline=True)
+        embed.add_field(name="Laufzeit", value=f"`{uptime}`", inline=True)
+        embed.add_field(name="Server", value=f"`{guilds}`", inline=True)
         embed.timestamp = discord.utils.utcnow()
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -115,7 +124,10 @@ class Utils(commands.Cog):
                         [
                             ("Boosts", str(guild.premium_subscription_count) if guild.premium_subscription_count else "0"),
                             ("Level", f"Stufe {guild.premium_tier}" if guild.premium_tier else "Basis"),
-                            ("Verifikation", guild.verification_level.name.title()),
+                            (
+                                "Verifikation",
+                                VERIFICATION_LABELS.get(guild.verification_level, "Unbekannt"),
+                            ),
                         ]
                     ),
                 ),

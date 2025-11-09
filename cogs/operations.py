@@ -283,7 +283,7 @@ class Operations(commands.Cog):
             try:
                 payload = json.loads(path.read_text(encoding="utf-8"))
             except json.JSONDecodeError:
-                logging.warning("Failed to decode scenarios.json, falling back to defaults.")
+                logging.warning("Konnte scenarios.json nicht lesen – verwende Standard-Szenarien.")
             else:
                 if isinstance(payload, list):
                     return [item for item in payload if isinstance(item, dict)] or DEFAULT_SCENARIOS
